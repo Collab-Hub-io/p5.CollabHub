@@ -61,37 +61,67 @@ socket.on("availableRoomsList", incoming => {
 
 const ch = {
 
-  getControl: function(h) {
+  control: (h, v) => {
+    const outgoing = {
+      mode: "push",
+      target: "all",
+      header: h,
+      values: v
+    };
+    socket.emit("control", outgoing);
+    return "Sending control..."
+  },
+
+  event: (h) => {
+    const outgoing = {
+      mode: "push",
+      target: "all",
+      header: h
+    };
+    socket.emit("event", outgoing);
+    return "Sending event..."
+  },
+
+  chat: (m) => {
+    const outgoing = {
+      target: "all",
+      chat: m,
+    };
+    socket.emit("chat", outgoing);
+    return "Sending chat message..."
+  },
+
+  getControl: h => {
     let data = h in controls ? controls[h] : 0;
     return data;
   },
 
-  regEvent: function(h, f) {
+  regEvent: (h, f) => {
     events[h] = f;
   },
 
-  username: function(u) {
+  username: u => {
     socket.emit("addUsername", { "username": u });
   },
 
-  getUsers: function() {
+  getUsers: () => {
     socket.emit("otherUsers");
     return "Getting user list..."
   },
 
-  joinRoom: function(roomName) {
+  joinRoom: roomName => {
     let outgoing = { room: roomName };
     socket.emit("joinRoom", outgoing);
     return `Joining room ${roomName}...`
   },
 
-  leaveRoom: function(roomName) {
+  leaveRoom: roomName => {
     let outgoing = { room: roomName };
     socket.emit("leaveRoom", outgoing);
     return `Leaving room ${roomName}...`
   },
 
-  getRooms: function() {
+  getRooms: () => {
     socket.emit("getAvailableRooms");
     return "Getting available room list..."
   }
