@@ -82,7 +82,7 @@ const ch = {
     return "Sending event..."
   },
 
-  chat: (m) => {
+  chat: (m, t) => {
     const outgoing = {
       chat: m
     };
