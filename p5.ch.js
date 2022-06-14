@@ -61,32 +61,32 @@ socket.on("availableRoomsList", incoming => {
 
 const ch = {
 
-  control: (h, v) => {
+  control: (h, v, t) => {
     const outgoing = {
       mode: "push",
-      target: "all",
       header: h,
       values: v
     };
+    t ? outgoing.target = t : outgoing.target = "all";
     socket.emit("control", outgoing);
     return "Sending control..."
   },
 
-  event: (h) => {
+  event: (h, t) => {
     const outgoing = {
       mode: "push",
-      target: "all",
       header: h
     };
+    t ? outgoing.target = t : outgoing.target = "all";
     socket.emit("event", outgoing);
     return "Sending event..."
   },
 
   chat: (m) => {
     const outgoing = {
-      target: "all",
-      chat: m,
+      chat: m
     };
+    t ? outgoing.target = t : outgoing.target = "all";
     socket.emit("chat", outgoing);
     return "Sending chat message..."
   },
