@@ -64,6 +64,10 @@ socket.on("availableRoomsList", incoming => {
   console.info(`Available rooms: ${roomList}`);
 });
 
+socket.onAny(incoming => {
+  console.warning(incoming);
+})
+
 
 // ----- functions
 
