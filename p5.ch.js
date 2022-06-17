@@ -47,6 +47,14 @@ socket.on("otherUsers", incoming => {
   console.info(`Connected users: ${userList}`);
 });
 
+socket.on("availableControls", incoming => {
+  console.info(`Available controls: ${incoming}`)
+});
+
+socket.on("availableEvents", incoming => {
+  console.info(`Available events: ${incoming}`)
+});
+
 socket.on("availableRoomsList", incoming => {
   let roomList = "",
       iterations = incoming.rooms.length;
@@ -61,23 +69,30 @@ socket.on("availableRoomsList", incoming => {
 
 const ch = {
 
-  control: (h, v, t) => {
+  control: (...args) => {
+    let mode = args[0] === "publish" ? "publish" : "push",
+        header = args[0] === "publish" ? args[1] : args[0],
+        values = args[0] === "publish" ? args[2] : args[1],
+        target = args[3] ? args[3] : "all"; 
     const outgoing = {
-      mode: "push",
-      header: h,
-      values: v
-    };
-    t ? outgoing.target = t : outgoing.target = "all";
+      "mode" : mode,
+      "header" : header,
+      "values" : values,
+      "target" : target
+    }
     socket.emit("control", outgoing);
     return "Sending control..."
   },
 
-  event: (h, t) => {
+  event: (...args) => {
+    let mode = args[0] === "publish" ? "publish" : "push",
+        header = args[0] === "publish" ? args[1] : args[0],
+        target = args[2] ? args[2] : "all"; 
     const outgoing = {
-      mode: "push",
-      header: h
-    };
-    t ? outgoing.target = t : outgoing.target = "all";
+      "mode" : mode,
+      "header" : header,
+      "target" : target
+    }
     socket.emit("event", outgoing);
     return "Sending event..."
   },
