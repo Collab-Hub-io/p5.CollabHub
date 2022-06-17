@@ -1,7 +1,7 @@
 /*
 p5.ch - p5 library for Collab-Hub - https://www.collab-hub.io
 Created by Nick Hwang, Anthony T. Marasco, Eric Sheffield
-Version v0.1.0 alpha | June 13, 2022
+Version v0.1.0 alpha | June 17, 2022
 */
 
 
