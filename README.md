@@ -1,7 +1,14 @@
 # p5.CollabHub
-p5 library for Collab-Hub
 
-CURRENTLY IN ALPHA - Full Collab-Hub functionality not yet implemented.  
+<div style="display: flex; align-items: center; gap: 3ch; padding-bottom: 2rem;">
+  <img src="p5Logo.png" height="100px">
+  <p style="font-size: 2rem; font-weight: bold;">&lt--&gt</p>
+  <img src="chLogo.png" height="100px">
+</div>
+
+A p5 client library for collaborating with other performers on Collab-Hub.
+
+CURRENTLY IN ALPHA - Full Collab-Hub functionality may not yet be implemented.  
 
 Include the p5.CollabHub library in your p5 sketch using this script tag:  
 
