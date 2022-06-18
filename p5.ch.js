@@ -213,7 +213,7 @@ const ch = {
     return `Un-observing control ${header}...`
   },
 
-  observeAllControl: bool => {
+  observeAllControls: bool => {
     let outgoing = { observe: bool };
     socket.emit("observeAllControl", outgoing);
     socket.emit("getMyControls");
