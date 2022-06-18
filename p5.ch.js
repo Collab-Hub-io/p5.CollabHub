@@ -64,8 +64,8 @@ socket.on("availableRoomsList", incoming => {
   console.info(`Available rooms: ${roomList}`);
 });
 
-socket.onAny(incoming => {
-  console.warning(incoming);
+socket.onAny(e, ...args => {
+  console.warning(e, args);
 })
 
 
@@ -74,9 +74,9 @@ socket.onAny(incoming => {
 const ch = {
 
   control: (...args) => {
-    let mode = args[0] === "publish" ? "publish" : "push",
-        header = args[0] === "publish" ? args[1] : args[0],
-        values = args[0] === "publish" ? args[2] : args[1],
+    let mode = args[0] === "publish" || "pub" ? "publish" : "push",
+        header = args[0] === "publish" || "pub" ? args[1] : args[0],
+        values = args[0] === "publish" || "pub" ? args[2] : args[1],
         target = args[3] ? args[3] : "all"; 
     const outgoing = {
       "mode" : mode,
@@ -89,8 +89,8 @@ const ch = {
   },
 
   event: (...args) => {
-    let mode = args[0] === "publish" ? "publish" : "push",
-        header = args[0] === "publish" ? args[1] : args[0],
+    let mode = args[0] === "publish" || "pub" ? "publish" : "push",
+        header = args[0] === "publish" || "pub" ? args[1] : args[0],
         target = args[2] ? args[2] : "all"; 
     const outgoing = {
       "mode" : mode,
