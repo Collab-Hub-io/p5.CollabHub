@@ -1,7 +1,7 @@
 /*
 p5.ch - p5 library for Collab-Hub - https://www.collab-hub.io
 Created by Nick Hwang, Anthony T. Marasco, Eric Sheffield
-Version v0.1.0 alpha | June 17, 2022
+Version v0.1.0 alpha | June 18, 2022
 */
 
 
@@ -25,19 +25,6 @@ socket.on("chat", incoming => {
   console.log(`${incoming.id}: "${incoming.chat}"`);
 })
 
-socket.on("control", incoming => {
-  let newHeader = incoming.header,
-      newValues = incoming.values;
-  controls[newHeader] = newValues;
-});
-
-socket.on("event", incoming => {
-  let newHeader = incoming.header;
-  if (newHeader in events) {
-    events[newHeader]();
-  }
-});
-
 socket.on("otherUsers", incoming => {
   let userList = "",
       iterations = incoming.users.length;
@@ -47,13 +34,78 @@ socket.on("otherUsers", incoming => {
   console.info(`Connected users: ${userList}`);
 });
 
+// controls
+
+socket.on("control", incoming => {
+  let newHeader = incoming.header,
+      newValues = incoming.values;
+  controls[newHeader] = newValues;
+});
+
 socket.on("availableControls", incoming => {
-  console.info(`Available controls: ${incoming}`)
+  console.info("Available controls:")
+  for (let e of incoming.controls) {
+    delete e.observers;
+    delete e.mode;
+    console.log(e)
+  }
+});
+
+socket.on("observedControls", incoming => {
+  console.info("Observed controls:")
+  for (let e of incoming.controls) {
+    delete e.observers;
+    delete e.mode;
+    console.log(e)
+  }
+});
+
+socket.on("myControls", incoming => {
+  console.info("My controls:")
+  for (let e of incoming.controls) {
+    delete e.observers;
+    delete e.mode;
+    console.log(e)
+  }
+});
+
+// events
+
+socket.on("event", incoming => {
+  let newHeader = incoming.header;
+  if (newHeader in events) {
+    events[newHeader]();
+  }
 });
 
 socket.on("availableEvents", incoming => {
-  console.info(`Available events: ${incoming}`)
+  console.info("Available events:")
+  for (let e of incoming.events) {
+    delete e.observers;
+    delete e.mode;
+    console.log(e)
+  }
 });
+
+socket.on("observedEvents", incoming => {
+  console.info("Observed events:")
+  for (let e of incoming.events) {
+    delete e.observers;
+    delete e.mode;
+    console.log(e)
+  }
+});
+
+socket.on("myEvents", incoming => {
+  console.info("My events:")
+  for (let e of incoming.events) {
+    delete e.observers;
+    delete e.mode;
+    console.log(e)
+  }
+});
+
+// rooms
 
 socket.on("availableRoomsList", incoming => {
   let roomList = "",
@@ -64,19 +116,17 @@ socket.on("availableRoomsList", incoming => {
   console.info(`Available rooms: ${roomList}`);
 });
 
-socket.onAny(e, ...args => {
-  console.warning(e, args);
-})
-
 
 // ----- functions
 
 const ch = {
 
+  // sending data
+  
   control: (...args) => {
-    let mode = args[0] === "publish" || "pub" ? "publish" : "push",
-        header = args[0] === "publish" || "pub" ? args[1] : args[0],
-        values = args[0] === "publish" || "pub" ? args[2] : args[1],
+    let mode = args[0] === "publish" || args[0] === "pub" ? "publish" : "push",
+        header = mode === "publish" ? args[1] : args[0],
+        values = mode === "publish" ? args[2] : args[1],
         target = args[3] ? args[3] : "all"; 
     const outgoing = {
       "mode" : mode,
@@ -89,8 +139,8 @@ const ch = {
   },
 
   event: (...args) => {
-    let mode = args[0] === "publish" || "pub" ? "publish" : "push",
-        header = args[0] === "publish" || "pub" ? args[1] : args[0],
+    let mode = args[0] === "publish" || args[0] === "pub" ? "publish" : "push",
+        header = mode === "publish" ? args[1] : args[0],
         target = args[2] ? args[2] : "all"; 
     const outgoing = {
       "mode" : mode,
@@ -110,6 +160,12 @@ const ch = {
     return "Sending chat message..."
   },
 
+  username: u => {
+    socket.emit("addUsername", { "username": u });
+    return "Requesting username..."
+  },
+
+  // requesting/using data
   getControl: h => {
     let data = h in controls ? controls[h] : 0;
     return data;
@@ -119,14 +175,12 @@ const ch = {
     events[h] = f;
   },
 
-  username: u => {
-    socket.emit("addUsername", { "username": u });
-  },
-
   getUsers: () => {
     socket.emit("otherUsers");
     return "Getting user list..."
   },
+
+  // room management
 
   joinRoom: roomName => {
     let outgoing = { room: roomName };
@@ -143,6 +197,62 @@ const ch = {
   getRooms: () => {
     socket.emit("getAvailableRooms");
     return "Getting available room list..."
+  },
+
+  // control management
+
+  observeControl: header => {
+    let outgoing = { header: header };
+    socket.emit("observeControl", outgoing);
+    return `Observing control ${header}...`
+  },
+
+  unobserveControl: header => {
+    let outgoing = { header: header };
+    socket.emit("unobserveControl", outgoing);
+    return `Un-observing control ${header}...`
+  },
+
+  observeAllControl: bool => {
+    let outgoing = { observe: bool };
+    socket.emit("observeAllControl", outgoing);
+    socket.emit("getMyControls");
+    return `Observing all controls...`
+  },
+
+  clearControl: header => {
+    let outgoing = { header: header };
+    socket.emit("clearControl", outgoing);
+    socket.emit("getMyControls");
+    return `Clearing control ${header}...`
+  },
+
+  // event management
+
+  observeEvent: header => {
+    let outgoing = { header: header };
+    socket.emit("observeEvent", outgoing);
+    return `Observing event ${header}...`
+  },
+
+  unobserveEvent: header => {
+    let outgoing = { header: header };
+    socket.emit("unobserveEvent", outgoing);
+    return `Un-observing event ${header}...`
+  },
+
+  observeAllEvents: bool => {
+    let outgoing = { observe: bool };
+    socket.emit("observeAllEvents", outgoing);
+    socket.emit("getMyEvents");
+    return `Observing all events...`
+  },
+
+  clearEvent: header => {
+    let outgoing = { header: header };
+    socket.emit("clearEvent", outgoing);
+    socket.emit("getMyEvents");
+    return `Clearing event ${header}...`
   }
 
 }
