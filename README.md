@@ -1,10 +1,7 @@
 # p5.CollabHub
 
-<div style="display: flex; align-items: center; gap: 3ch; padding-bottom: 2rem;">
-  <img src="p5Logo.png" height="100px">
-  <p style="font-size: 2rem; font-weight: bold;">&lt--&gt</p>
-  <img src="chLogo.png" height="100px">
-</div>
+<img src="p5Logo.png" height="100px">
+<img src="chLogo.png" height="100px">
 
 A p5 client library for collaborating with other performers on Collab-Hub.
 
