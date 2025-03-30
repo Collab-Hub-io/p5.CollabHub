@@ -12,10 +12,10 @@ const socket = io("https://ch-server.herokuapp.com/hub"),
 
 // ----- socket event listeners
 
-socket.on("connected", () => {
-  console.info("Connected to Collab-Hub server.");
-  socket.emit()
-});
+// socket.on("connected", () => {
+//   console.info("Connected to Collab-Hub server.");
+//   socket.emit()
+// });
 
 socket.on("serverMessage", incoming => {
    console.info(incoming.message);
