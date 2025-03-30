@@ -5,7 +5,7 @@ Version v0.1.0 alpha | June 18, 2022
 */
 
 
-const socket = io("http://ch-server.herokuapp.com/hub"),
+const socket = io("https://ch-server.herokuapp.com/hub"),
       controls = {},
       events = {};
 
